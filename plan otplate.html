@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Plan Otplate">
+<meta name="theme-color" content="#0a0f1e">
+<title>Plan Otplate Duga 2026</title>
+
+<!-- PWA manifest inline -->
+<script>
+const manifest = {
+  name: "Plan Otplate Duga 2026",
+  short_name: "Plan Otplate",
+  description: "Finansijski plan otplate duga za 2026",
+  start_url: ".",
+  display: "standalone",
+  background_color: "#0a0f1e",
+  theme_color: "#0a0f1e",
+  orientation: "portrait-primary",
+  icons: [{
+    src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%230a0f1e'/%3E%3Ctext y='330' x='80' font-size='320' font-family='serif'%3E💳%3C/text%3E%3C/svg%3E",
+    sizes: "512x512",
+    type: "image/svg+xml",
+    purpose: "any maskable"
+  }]
+};
+const blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+const manifestURL = URL.createObjectURL(blob);
+document.addEventListener('DOMContentLoaded', () => {
+  const link = document.createElement('link');
+  link.rel = 'manifest';
+  link.href = manifestURL;
+  document.head.appendChild(link);
+});
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
+
+  :root {
+    --bg: #0a0f1e;
+    --bg2: #0d1929;
+    --surface: rgba(255,255,255,0.04);
+    --border: rgba(255,255,255,0.08);
+    --text: #e2e8f0;
+    --text-muted: #64748b;
+    --text-dim: #94a3b8;
+    --blue: #3b82f6;
+    --blue-light: #93c5fd;
+    --green: #22c55e;
+    --green-light: #4ade80;
+    --red: #ef4444;
+    --red-light: #f87171;
+    --amber: #f59e0b;
+    --mono: 'DM Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+  }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  /* scrollable main area */
+  #main-scroll {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: env(safe-area-inset-bottom, 20px);
+  }
+
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
+
+  /* ── Header ── */
+  header {
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 16px;
+    padding-top: calc(12px + env(safe-area-inset-top, 0px));
+    flex-shrink: 0;
+    z-index: 10;
+  }
+  .header-inner { display: flex; justify-content: space-between; align-items: center; gap: 10px; max-width: 700px; margin: 0 auto; }
+  .header-title { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; color: #f1f5f9; }
+  .header-sub { font-size: 10px; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; font-family: var(--mono); }
+
+  /* ── Bottom Nav ── */
+  nav {
+    display: flex;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border);
+    padding: 8px 0;
+    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+    flex-shrink: 0;
+  }
+  .nav-btn {
+    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+    padding: 6px 0; cursor: pointer; border: none; background: none;
+    color: var(--text-muted); font-family: var(--sans); transition: color 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .nav-btn.active { color: var(--blue); }
+  .nav-btn .nav-icon { font-size: 22px; line-height: 1; }
+  .nav-btn .nav-label { font-size: 10px; font-weight: 600; letter-spacing: 0.5px; }
+
+  /* ── Content sections ── */
+  .section { display: none; padding: 16px; max-width: 700px; margin: 0 auto; }
+  .section.active { display: block; }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  .card-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .card-value { font-size: 24px; font-weight: 700; line-height: 1.1; }
+  .card-sub { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+
+  /* ── KPI grid ── */
+  .kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+  .kpi-full { grid-column: 1 / -1; }
+
+  /* ── Slider ── */
+  .slider-wrap { margin-bottom: 16px; }
+  .slider-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+  .slider-name { font-size: 11px; font-family: var(--mono); letter-spacing: 1.5px; color: var(--text-dim); text-transform: uppercase; }
+  .slider-val { font-size: 20px; font-weight: 700; font-family: var(--mono); }
+  .slider-sub { font-size: 10px; color: var(--text-muted); }
+  input[type=range] {
+    -webkit-appearance: none; appearance: none;
+    width: 100%; height: 6px; border-radius: 3px;
+    outline: none; cursor: pointer;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 22px; height: 22px;
+    border-radius: 50%; background: var(--blue);
+    border: 3px solid #fff; box-shadow: 0 0 12px rgba(59,130,246,0.5);
+    cursor: pointer;
+  }
+  .slider-limits { display: flex; justify-content: space-between; font-size: 10px; color: #475569; margin-top: 4px; }
+
+  /* ── Timeline months ── */
+  .months-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 16px; }
+  .months-row::-webkit-scrollbar { height: 0; }
+  .month-chip {
+    flex-shrink: 0; padding: 8px 14px; border-radius: 20px;
+    font-size: 12px; font-weight: 700; cursor: pointer;
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--text-muted); transition: all 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .month-chip.active { background: rgba(59,130,246,0.2); border-color: var(--blue); color: var(--blue-light); }
+  .month-chip.done { background: rgba(34,197,94,0.15); border-color: var(--green); color: var(--green-light); }
+  .month-chip.past { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); color: #fca5a5; }
+
+  /* ── Progress bar ── */
+  .progress-track { height: 8px; background: #1e293b; border-radius: 4px; overflow: hidden; margin-bottom: 20px; }
+  .progress-fill {
+    height: 100%; border-radius: 4px;
+    background: linear-gradient(90deg, var(--blue), var(--green));
+    transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  /* ── Month detail card ── */
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .detail-item { padding: 12px; background: rgba(255,255,255,0.03); border-radius: 12px; border: 1px solid rgba(255,255,255,0.06); }
+  .detail-label { font-size: 10px; font-family: var(--mono); color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px; }
+  .detail-value { font-size: 18px; font-weight: 700; font-family: var(--mono); }
+  .detail-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+  /* ── Table ── */
+  .tbl-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 16px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { padding: 10px 12px; text-align: left; font-family: var(--mono); font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); background: rgba(255,255,255,0.04); border-bottom: 1px solid var(--border); font-weight: 500; white-space: nowrap; }
+  td { padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.04); white-space: nowrap; }
+  tr:last-child td { border-bottom: none; }
+  tr.alt { background: rgba(255,255,255,0.02); }
+  .badge { display: inline-block; padding: 3px 9px; border-radius: 20px; font-size: 10px; font-weight: 700; }
+  .badge-blue { background: rgba(59,130,246,0.15); color: var(--blue-light); border: 1px solid rgba(59,130,246,0.3); }
+  .badge-green { background: rgba(34,197,94,0.15); color: var(--green-light); border: 1px solid rgba(34,197,94,0.3); }
+  .badge-red { background: rgba(239,68,68,0.12); color: var(--red-light); border: 1px solid rgba(239,68,68,0.25); }
+  .badge-amber { background: rgba(245,158,11,0.12); color: #fcd34d; border: 1px solid rgba(245,158,11,0.25); }
+
+  /* ── Scenario cards ── */
+  .scenario-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  .scenario-card { padding: 14px; border-radius: 14px; border: 1px solid; }
+  .scenario-months { font-size: 26px; font-weight: 700; font-family: var(--mono); margin: 6px 0 2px; }
+  .scenario-rate { font-size: 11px; color: var(--text-muted); margin-bottom: 10px; }
+  .scenario-status { font-size: 10px; font-weight: 700; padding: 5px 8px; border-radius: 8px; }
+
+  /* ── Section title ── */
+  .section-title { font-size: 11px; font-family: var(--mono); letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; padding-top: 4px; }
+
+  /* ── Alert box ── */
+  .alert { padding: 12px 14px; border-radius: 12px; font-size: 13px; font-weight: 600; text-align: center; margin-top: 12px; }
+
+  /* ── Row pair ── */
+  .row-pair { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .row-pair:last-child { border-bottom: none; }
+  .row-pair-label { font-size: 13px; color: var(--text-dim); }
+  .row-pair-value { font-size: 13px; font-weight: 700; font-family: var(--mono); }
+
+  @keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+  .fade-up { animation: fadeUp 0.3s ease forwards; }
+
+  /* Mobile tweaks */
+  @media (max-width: 400px) {
+    .scenario-grid { grid-template-columns: 1fr; }
+    .kpi-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <div class="header-inner">
+    <div>
+      <div class="header-sub">💳 Finansijska Kontrola</div>
+      <div class="header-title">Plan Otplate 2026</div>
+    </div>
+    <div id="header-kpi" style="text-align:right">
+      <div style="font-size:11px;color:var(--text-muted);font-family:var(--mono)">UKUPNI DUG</div>
+      <div style="font-size:18px;font-weight:700;color:var(--red);font-family:var(--mono)" id="hdr-debt"></div>
+    </div>
+  </div>
+</header>
+
+<!-- Scrollable content -->
+<div id="main-scroll">
+
+  <!-- ══ TIMELINE ══ -->
+  <div class="section active fade-up" id="sec-timeline">
+    <!-- Sliders -->
+    <div class="card" style="margin-bottom:12px">
+      <div class="slider-wrap">
+        <div class="slider-header">
+          <div>
+            <div class="slider-name">💼 Strani Posao</div>
+            <div class="slider-sub">Isplata 1–7. u mesecu</div>
+          </div>
+          <div style="text-align:right">
+            <div class="slider-val" style="color:var(--blue)" id="sl1-val">€700</div>
+            <div class="slider-sub" id="sl1-rsd"></div>
+          </div>
+        </div>
+        <input type="range" id="sl-job" min="600" max="800" step="10" value="700">
+        <div class="slider-limits"><span>€600 min</span><span>€800 max</span></div>
+      </div>
+      <div class="slider-wrap" style="margin-bottom:0">
+        <div class="slider-header">
+          <div>
+            <div class="slider-name">➕ Dodatna uplata</div>
+            <div class="slider-sub">Opcionalno/mesečno</div>
+          </div>
+          <div style="text-align:right">
+            <div class="slider-val" style="color:var(--green)" id="sl2-val">0</div>
+            <div class="slider-sub">RSD/mes.</div>
+          </div>
+        </div>
+        <input type="range" id="sl-extra" min="0" max="50000" step="1000" value="0">
+        <div class="slider-limits"><span>0</span><span>50.000 RSD</span></div>
+      </div>
+    </div>
+
+    <!-- KPI row -->
+    <div class="kpi-grid">
+      <div class="card" style="border-color:rgba(239,68,68,0.3);background:rgba(239,68,68,0.06);margin-bottom:0">
+        <div class="card-label">📉 Ukupni dug</div>
+        <div class="card-value" style="color:var(--red);font-family:var(--mono);font-size:18px" id="kpi-debt"></div>
+        <div class="card-sub" id="kpi-debt-eur"></div>
+      </div>
+      <div class="card" style="border-color:rgba(59,130,246,0.3);background:rgba(59,130,246,0.06);margin-bottom:0">
+        <div class="card-label">💳 Mesečna uplata</div>
+        <div class="card-value" style="color:var(--blue);font-family:var(--mono);font-size:18px" id="kpi-payment"></div>
+        <div class="card-sub" id="kpi-payment-eur"></div>
+      </div>
+      <div class="card kpi-full" id="kpi-status-card" style="margin-bottom:0">
+        <div class="card-label" id="kpi-status-label"></div>
+        <div class="card-value" style="font-family:var(--mono);font-size:18px" id="kpi-status-val"></div>
+        <div class="card-sub" id="kpi-status-sub"></div>
+      </div>
+    </div>
+
+    <!-- Spacer -->
+    <div style="height:12px"></div>
+
+    <!-- Progress -->
+    <div class="section-title">📅 TIMELINE JUN–DEC 2026</div>
+    <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+
+    <!-- Month chips -->
+    <div class="months-row" id="months-row"></div>
+
+    <!-- Selected month detail -->
+    <div class="card" id="month-detail" style="border-color:rgba(59,130,246,0.25);background:rgba(59,130,246,0.06)">
+      <div class="section-title" id="md-title"></div>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <div class="detail-label">💳 Uplata</div>
+          <div class="detail-value" style="color:var(--blue)" id="md-payment"></div>
+          <div class="detail-sub" id="md-payment-eur"></div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">⚖️ Preostalo</div>
+          <div class="detail-value" id="md-remaining"></div>
+          <div class="detail-sub" id="md-remaining-eur"></div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">% Otplaćeno</div>
+          <div class="detail-value" style="color:var(--green)" id="md-pct"></div>
+          <div class="detail-sub">od ukupnog duga</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">💼 Strani Posao</div>
+          <div class="detail-value" style="color:var(--text)" id="md-job"></div>
+          <div class="detail-sub">Isplata 1–7.</div>
+        </div>
+      </div>
+      <div id="md-done-alert" class="alert" style="display:none;background:rgba(34,197,94,0.1);color:var(--green-light);border:1px solid rgba(34,197,94,0.3)">
+        🎉 Dug kompletno otplaćen ovaj mesec!
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TABELA ══ -->
+  <div class="section" id="sec-tabela">
+    <div class="section-title">📋 TRANSAKCIJE — MAJ 2026</div>
+    <div class="tbl-wrap">
+      <table id="tbl-transactions"></table>
+    </div>
+
+    <div class="section-title">📅 PLAN OTPLATE JUN–DEC 2026</div>
+    <div class="tbl-wrap">
+      <table id="tbl-schedule"></table>
+    </div>
+  </div>
+
+  <!-- ══ KALKULATOR ══ -->
+  <div class="section" id="sec-kalk">
+    <div class="section-title">🔴 STANJE DUGA</div>
+    <div class="card" style="border-color:rgba(239,68,68,0.25);background:rgba(239,68,68,0.05)">
+      <div id="kalk-debt-rows"></div>
+    </div>
+
+    <div class="section-title">🔵 MESEČNI PRIHODI</div>
+    <div class="card" style="border-color:rgba(59,130,246,0.25);background:rgba(59,130,246,0.05)">
+      <div id="kalk-income-rows"></div>
+    </div>
+
+    <div class="section-title">📊 SCENARIJI ZA 2026</div>
+    <div class="scenario-grid" id="scenario-grid"></div>
+  </div>
+
+</div>
+
+<!-- Bottom nav -->
+<nav>
+  <button class="nav-btn active" data-tab="timeline" onclick="switchTab('timeline')">
+    <span class="nav-icon">📅</span>
+    <span class="nav-label">Timeline</span>
+  </button>
+  <button class="nav-btn" data-tab="tabela" onclick="switchTab('tabela')">
+    <span class="nav-icon">📋</span>
+    <span class="nav-label">Tabela</span>
+  </button>
+  <button class="nav-btn" data-tab="kalk" onclick="switchTab('kalk')">
+    <span class="nav-icon">🔢</span>
+    <span class="nav-label">Kalkulator</span>
+  </button>
+</nav>
+
+<script>
+// ── Data ─────────────────────────────────────────────────────────────────────
+const EUR = 117;
+const TRANSACTIONS = [
+  { date:"2026-05-04", type:"income",    label:"Džeparac",  amount:15000 },
+  { date:"2026-05-05", type:"kamata",    label:"Kamata",    amount:11700 },
+  { date:"2026-05-08", type:"kamata",    label:"Kamata",    amount:11700 },
+  { date:"2026-05-10", type:"kamata",    label:"Kamata",    amount:17550 },
+  { date:"2026-05-10", type:"transport", label:"Transport", amount:4000  },
+  { date:"2026-05-11", type:"income",    label:"Džeparac",  amount:15000 },
+  { date:"2026-05-15", type:"kamata",    label:"Kamata",    amount:17550 },
+  { date:"2026-05-17", type:"kamata",    label:"Kamata",    amount:17550 },
+  { date:"2026-05-18", type:"income",    label:"Džeparac",  amount:15000 },
+  { date:"2026-05-20", type:"kamata",    label:"Kamata",    amount:8775  },
+  { date:"2026-05-20", type:"transport", label:"Transport", amount:4000  },
+  { date:"2026-05-21", type:"kamata",    label:"Kamata",    amount:9360  },
+  { date:"2026-05-25", type:"income",    label:"Džeparac",  amount:15000 },
+  { date:"2026-05-26", type:"kamata",    label:"Kamata",    amount:11700 },
+  { date:"2026-05-30", type:"kamata",    label:"Kamata",    amount:17550 },
+  { date:"2026-05-30", type:"transport", label:"Transport", amount:4000  },
+];
+
+const totalKamata = TRANSACTIONS.filter(t=>t.type==="kamata").reduce((s,t)=>s+t.amount,0);
+const TOTAL_DEBT = totalKamata * 10;
+
+const MONTHS_SHORT = ["Jan","Feb","Mar","Apr","Maj","Jun","Jul","Avg","Sep","Okt","Nov","Dec"];
+const MONTHS_FULL  = ["Januar","Februar","Mart","April","Maj","Jun","Jul","Avgust","Septembar","Oktobar","Novembar","Decembar"];
+const FUTURE = [5,6,7,8,9,10,11];
+
+// ── State ─────────────────────────────────────────────────────────────────────
+let jobEur = 700, extra = 0, selectedMi = 5;
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+const fmt  = n => new Intl.NumberFormat("sr-RS").format(Math.round(n));
+const fmtE = n => "€" + new Intl.NumberFormat("sr-RS").format(Math.round(n*10)/10);
+
+function buildSchedule(monthly) {
+  let rem = TOTAL_DEBT;
+  const out = [];
+  for (const mi of FUTURE) {
+    const pay = Math.min(monthly, rem);
+    rem = Math.max(0, rem - pay);
+    out.push({ mi, name:MONTHS_FULL[mi], short:MONTHS_SHORT[mi], payment:pay, remaining:rem, done:rem===0 });
+    if (rem === 0) break;
+  }
+  return out;
+}
+
+// ── Main render ───────────────────────────────────────────────────────────────
+function render() {
+  const monthly = jobEur * EUR + extra;
+  const schedule = buildSchedule(monthly);
+  const paidOffByEnd = schedule[schedule.length-1]?.done;
+  const endRemaining = schedule[schedule.length-1]?.remaining || 0;
+  const totalPaid = TOTAL_DEBT - endRemaining;
+  const pct = Math.round((totalPaid / TOTAL_DEBT) * 100);
+
+  // Header
+  document.getElementById("hdr-debt").textContent = fmt(TOTAL_DEBT) + " RSD";
+
+  // Sliders
+  const slJob = document.getElementById("sl-job");
+  slJob.style.background = `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${((jobEur-600)/200)*100}%, #1e293b ${((jobEur-600)/200)*100}%, #1e293b 100%)`;
+  document.getElementById("sl1-val").textContent = `€${jobEur}`;
+  document.getElementById("sl1-rsd").textContent = fmt(jobEur*EUR) + " RSD";
+  const slExtra = document.getElementById("sl-extra");
+  slExtra.style.background = `linear-gradient(to right, #22c55e 0%, #22c55e ${(extra/50000)*100}%, #1e293b ${(extra/50000)*100}%, #1e293b 100%)`;
+  document.getElementById("sl2-val").textContent = fmt(extra);
+
+  // KPI cards
+  document.getElementById("kpi-debt").textContent = fmt(TOTAL_DEBT) + " RSD";
+  document.getElementById("kpi-debt-eur").textContent = fmtE(TOTAL_DEBT/EUR);
+  document.getElementById("kpi-payment").textContent = fmt(monthly) + " RSD";
+  document.getElementById("kpi-payment-eur").textContent = fmtE(monthly/EUR);
+
+  const statusCard = document.getElementById("kpi-status-card");
+  const statusLabel = document.getElementById("kpi-status-label");
+  const statusVal   = document.getElementById("kpi-status-val");
+  const statusSub   = document.getElementById("kpi-status-sub");
+  if (paidOffByEnd) {
+    statusCard.style.borderColor = "rgba(34,197,94,0.35)";
+    statusCard.style.background  = "rgba(34,197,94,0.08)";
+    statusLabel.textContent = "🎯 Status";
+    statusVal.style.color   = "#4ade80";
+    statusVal.textContent   = `✅ Otplaćeno za ${schedule.length} mesec(i)!`;
+    statusSub.textContent   = `Završeno: ${schedule[schedule.length-1].name} 2026`;
+  } else {
+    statusCard.style.borderColor = "rgba(245,158,11,0.3)";
+    statusCard.style.background  = "rgba(245,158,11,0.06)";
+    statusLabel.textContent = "⚠️ Preostalo Dec 2026";
+    statusVal.style.color   = "#fbbf24";
+    statusVal.textContent   = fmt(endRemaining) + " RSD";
+    statusSub.textContent   = fmtE(endRemaining/EUR) + " · nije dovoljno za 2026";
+  }
+
+  // Progress bar
+  document.getElementById("prog-fill").style.width = pct + "%";
+
+  // Month chips
+  const row = document.getElementById("months-row");
+  row.innerHTML = `<div class="month-chip past">📌 MAJ</div>`;
+  schedule.forEach(s => {
+    const chip = document.createElement("div");
+    chip.className = "month-chip" + (s.done ? " done" : "") + (s.mi === selectedMi ? " active" : "");
+    chip.textContent = (s.done ? "✅ " : "📅 ") + s.short;
+    chip.onclick = () => { selectedMi = s.mi; render(); };
+    row.appendChild(chip);
+  });
+
+  // Month detail
+  const sel = schedule.find(s => s.mi === selectedMi) || schedule[0];
+  if (sel) {
+    const pctPaid = Math.round(((TOTAL_DEBT - sel.remaining) / TOTAL_DEBT) * 100);
+    document.getElementById("md-title").textContent = `📅 ${sel.name} 2026`;
+    document.getElementById("md-payment").textContent   = fmt(sel.payment) + " RSD";
+    document.getElementById("md-payment-eur").textContent = fmtE(sel.payment/EUR);
+    document.getElementById("md-remaining").textContent   = fmt(sel.remaining) + " RSD";
+    document.getElementById("md-remaining").style.color   = sel.done ? "#4ade80" : "#f87171";
+    document.getElementById("md-remaining-eur").textContent = fmtE(sel.remaining/EUR);
+    document.getElementById("md-pct").textContent = pctPaid + "%";
+    document.getElementById("md-job").textContent = `€${jobEur}`;
+    const doneAlert = document.getElementById("md-done-alert");
+    doneAlert.style.display = sel.done ? "block" : "none";
+  }
+
+  renderTabela(schedule);
+  renderKalk(monthly);
+}
+
+function renderTabela(schedule) {
+  // Transactions table
+  const tbl = document.getElementById("tbl-transactions");
+  const sorted = [...TRANSACTIONS].sort((a,b) => a.date < b.date ? 1 : -1);
+  tbl.innerHTML = `<thead><tr>
+    <th>Datum</th><th>Kat.</th><th>Iznos</th><th>Dug (×10)</th>
+  </tr></thead><tbody>` +
+  sorted.map((t,i) => {
+    const isKam = t.type==="kamata", isInc = t.type==="income";
+    const icon  = isInc ? "💰" : isKam ? "🏦" : "🚖";
+    const col   = isInc ? "#4ade80" : isKam ? "#f87171" : "#fb923c";
+    const debt  = isKam ? `<span style="color:#f87171;font-weight:700">${fmt(t.amount*10)}</span>` : "—";
+    return `<tr class="${i%2===1?'alt':''}">
+      <td style="font-family:var(--mono);font-size:11px;color:var(--text-muted)">${t.date.slice(5)}</td>
+      <td style="color:${col};font-weight:600">${icon} ${t.label}</td>
+      <td style="font-family:var(--mono);font-weight:600;color:${isInc?'#4ade80':'var(--text)'}">${isInc?'+':'−'}${fmt(t.amount)}</td>
+      <td style="font-family:var(--mono)">${debt}</td>
+    </tr>`;
+  }).join("") +
+  `<tr style="background:rgba(239,68,68,0.1)">
+    <td colspan="2" style="font-weight:700;color:var(--text)">UKUPNI DUG</td>
+    <td colspan="2" style="font-family:var(--mono);font-weight:700;color:var(--red)">${fmt(TOTAL_DEBT)} RSD</td>
+  </tr></tbody>`;
+
+  // Schedule table
+  const tbl2 = document.getElementById("tbl-schedule");
+  tbl2.innerHTML = `<thead><tr>
+    <th>Mesec</th><th>Uplata</th><th>Preostalo</th><th>Status</th>
+  </tr></thead><tbody>` +
+  schedule.map((s,i) => {
+    const badge = s.done
+      ? `<span class="badge badge-green">✅ Plaćeno</span>`
+      : `<span class="badge badge-blue">⏳ U toku</span>`;
+    return `<tr class="${i%2===1?'alt':''}">
+      <td style="font-weight:600">${s.name}</td>
+      <td style="font-family:var(--mono);color:var(--blue-light);font-weight:600">${fmt(s.payment)}</td>
+      <td style="font-family:var(--mono);color:${s.done?'#4ade80':'#f87171'};font-weight:700">${fmt(s.remaining)}</td>
+      <td>${badge}</td>
+    </tr>`;
+  }).join("") + "</tbody>";
+}
+
+function renderKalk(monthly) {
+  const kamataTotal = TRANSACTIONS.filter(t=>t.type==="kamata").reduce((s,t)=>s+t.amount,0);
+  const dzeparac = 60000;
+
+  document.getElementById("kalk-debt-rows").innerHTML = [
+    ["Kamata plaćena (maj)", fmt(kamataTotal) + " RSD"],
+    ["Kurs EUR/RSD", `1 EUR = ${EUR} RSD`],
+    ["Dug = kamata × 10", fmt(TOTAL_DEBT) + " RSD"],
+    ["U evrima", fmtE(TOTAL_DEBT/EUR)],
+  ].map(([k,v]) => `<div class="row-pair">
+    <span class="row-pair-label">${k}</span>
+    <span class="row-pair-value">${v}</span>
+  </div>`).join("");
+
+  document.getElementById("kalk-income-rows").innerHTML = [
+    ["Džeparac (mes.)", fmt(dzeparac) + " RSD"],
+    ["Strani posao", `€${jobEur} = ${fmt(jobEur*EUR)} RSD`],
+    ["Dodatna uplata", fmt(extra) + " RSD"],
+    ["Ukupno za otplatu", fmt(monthly) + " RSD"],
+  ].map(([k,v]) => `<div class="row-pair">
+    <span class="row-pair-label">${k}</span>
+    <span class="row-pair-value">${v}</span>
+  </div>`).join("");
+
+  const scenarios = [
+    { label:"MIN €600", monthly:600*EUR, color:"#f59e0b", borderAlpha:"rgba(245,158,11,0.3)", bgAlpha:"rgba(245,158,11,0.07)" },
+    { label:"MAX €800", monthly:800*EUR, color:"#3b82f6", borderAlpha:"rgba(59,130,246,0.3)",  bgAlpha:"rgba(59,130,246,0.07)"  },
+    { label:"Tvoj izbor", monthly,       color:"#22c55e", borderAlpha:"rgba(34,197,94,0.3)",   bgAlpha:"rgba(34,197,94,0.07)"   },
+  ];
+  document.getElementById("scenario-grid").innerHTML = scenarios.map(sc => {
+    const months = Math.ceil(TOTAL_DEBT / sc.monthly);
+    const ok = months <= 7;
+    const rem = Math.max(0, TOTAL_DEBT - sc.monthly*7);
+    return `<div class="scenario-card" style="border-color:${sc.borderAlpha};background:${sc.bgAlpha}">
+      <div style="font-size:10px;color:var(--text-muted);font-family:var(--mono);letter-spacing:1px">${sc.label}</div>
+      <div class="scenario-months" style="color:${sc.color}">${months}</div>
+      <div class="scenario-rate">${fmt(sc.monthly)} RSD/mes.</div>
+      <div class="scenario-status" style="background:${ok?'rgba(34,197,94,0.1)':'rgba(245,158,11,0.1)'};color:${ok?'#4ade80':'#fbbf24'}">
+        ${ok ? "✅ Pre 2027" : `⚠️ +${fmt(rem)}`}
+      </div>
+    </div>`;
+  }).join("");
+}
+
+// ── Events ────────────────────────────────────────────────────────────────────
+document.getElementById("sl-job").addEventListener("input", e => {
+  jobEur = +e.target.value; render();
+});
+document.getElementById("sl-extra").addEventListener("input", e => {
+  extra = +e.target.value; render();
+});
+
+function switchTab(tab) {
+  document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+  document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+  document.getElementById("sec-" + tab).classList.add("active");
+  document.querySelector(`[data-tab="${tab}"]`).classList.add("active");
+  // scroll to top
+  document.getElementById("main-scroll").scrollTop = 0;
+}
+
+// ── PWA Install ───────────────────────────────────────────────────────────────
+let deferredPrompt;
+window.addEventListener("beforeinstallprompt", e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  // Show a subtle install hint after 2s
+  setTimeout(() => {
+    if (deferredPrompt) showInstallHint();
+  }, 2000);
+});
+function showInstallHint() {
+  const hint = document.createElement("div");
+  hint.style.cssText = `position:fixed;bottom:calc(70px + env(safe-area-inset-bottom));right:12px;background:#1e293b;border:1px solid rgba(59,130,246,0.4);border-radius:12px;padding:10px 14px;font-size:12px;color:#93c5fd;cursor:pointer;z-index:100;box-shadow:0 8px 32px rgba(0,0,0,0.4);max-width:200px;font-family:var(--sans)`;
+  hint.innerHTML = `📲 <strong>Instaliraj app</strong><br><span style="color:var(--text-muted)">Dodaj na početni ekran</span>`;
+  hint.onclick = () => { deferredPrompt.prompt(); hint.remove(); };
+  document.body.appendChild(hint);
+  setTimeout(() => hint.remove && hint.remove(), 8000);
+}
+
+// ── Service Worker (for offline) ──────────────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  const swCode = `
+    const CACHE = 'plan-otplate-v1';
+    self.addEventListener('install', e => {
+      e.waitUntil(caches.open(CACHE).then(c => c.addAll(['.'])));
+    });
+    self.addEventListener('fetch', e => {
+      e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
+    });
+  `;
+  const swBlob = new Blob([swCode], {type:'application/javascript'});
+  const swURL  = URL.createObjectURL(swBlob);
+  navigator.serviceWorker.register(swURL).catch(()=>{});
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+render();
+</script>
+</body>
+</html>
